@@ -114,8 +114,34 @@
     </ul>
     <p class="small">Not: Hesap adları ve kodları tamamen düzenlenebilir; tablo yalnızca başlangıç iskeleti sağlar.</p>
   </section>
+<section class="card" style="margin:20px 0">
+  <h3>Yapay Zeka Yorumu</h3>
+  <textarea id="prompt" placeholder="Analiz için GPT'ye mesaj yaz..." style="width:100%;height:100px"></textarea><br>
+  <button id="gptBtn">Gönder</button>
+  <div id="gptout" style="white-space:pre-wrap; margin-top:10px;"></div
+<script>
+document.getElementById("gptBtn").addEventListener("click", async () => {
+  const prompt = document.getElementById("prompt").value;
+  const out = document.getElementById("gptOut");
+  out.textContent = "Yükleniyor...";
 
-  <footer class="footer">© 2025 Nicaea Business Partners — Manuel girişli CFO analizi (v4.1).</footer>
+  try {
+    const res = await fetch("https://chatgpt-webapp.onrender.com/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt }),
+    });
+
+    const data = await res.json();
+    out.textContent = data.output || "Yanıt alınamadı.";
+  } catch (err) {
+    out.textContent = "Bir hata oluştu: " + err.message;
+  }
+});
+</script>
+</section>
+
+<script>  <footer class="footer">© 2025 Nicaea Business Partners — Manuel girişli CFO analizi (v4.1).</footer>
 
   <script src="assets/js/app.js" defer></script>
 </body>
