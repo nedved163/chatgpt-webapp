@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NBP | Finansal Analiz v4.1 (Netlify Ready)</title>
+  <meta name="description" content="Nicaea Business Partners - Manuel mizan girişi ile CFO oranları, açıklamalar ve analizler" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <header>
+    <h1>NBP | Finansal Analiz v4.1 — Manuel Giriş + Açıklamalar</h1>
+    <div class="subtitle">Dosya yüklemeden çalışır. 3 haneli ana kodlar (örn. 100 Kasa, 120 Alıcılar, 153 Ticari Mallar, 320 Satıcılar, 500 Sermaye, 600 Net Satışlar). İki dönem: <b>T-1</b> ve <b>T</b>.</div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-tab="data">Veri Giriş</button>
+    <button class="tab" data-tab="analiz">Analiz</button>
+    <button class="tab" data-tab="ref">Referans</button>
+  </nav>
+
+  <!-- Veri Girişi -->
+  <section id="sec-data" class="card">
+    <div class="row">
+      <div><label>Dönem T-1 Etiketi</label><input id="label_t1" type="text" value="T-1" /></div>
+      <div><label>Dönem T Etiketi</label><input id="label_t" type="text" value="T" /></div>
+      <div class="btns">
+        <button id="btn-save">Tabloyu Kaydet</button>
+        <button id="btn-clear" class="secondary">Temizle</button>
+      </div>
+    </div>
+    <div class="small">Hücreler düzenlenebilir. Dilediğin satırı değiştirebilir veya yeni satır ekleyebilirsin. “Tabloyu Kaydet” sonrasında Analiz sekmesinde oranlar ve açıklamalar güncellenir.</div>
+    <div class="row">
+      <div class="btns">
+        <button id="btn-add" class="ghost">+ Satır Ekle</button>
+        <button id="btn-del" class="ghost">Seçili Satır(ları) Sil</button>
+      </div>
+    </div>
+    <table id="tbl">
+      <thead>
+        <tr><th>Seç</th><th>Hesap Kodu (3 hane)</th><th>Hesap Adı</th><th id="h_t1">T-1</th><th id="h_t">T</th></tr>
+      </thead>
+      <tbody id="tbody">
+        <!-- SSR fallback -->
+        <tr><td class="right"><input type="checkbox" /></td><td contenteditable="true">100</td><td contenteditable="true">Kasa</td><td class="right" contenteditable="true">0</td><td class="right" contenteditable="true">0</td></tr>
+        <tr><td class="right"><input type="checkbox" /></td><td contenteditable="true">102</td><td contenteditable="true">Bankalar</td><td class="right" contenteditable="true">0</td><td class="right" contenteditable="true">0</td></tr>
+        <tr><td class="right"><input type="checkbox" /></td><td contenteditable="true">120</td><td contenteditable="true">Alıcılar</td><td class="right" contenteditable="true">0</td><td class="right" contenteditable="true">0</td></tr>
+      </tbody>
+    </table>
+
+    <div class="row extra">
+      <div class="flex">
+        <div>
+          <label>Çalışan Sayısı (T)</label>
+          <input id="inp_emp" type="number" min="0" step="1" value="0" />
+        </div>
+        <div>
+          <label>Faiz (T, nakit ödenen)</label>
+          <input id="inp_interest" type="number" min="0" step="0.01" value="0" />
+        </div>
+        <div>
+          <label>Vergi Gideri (T)</label>
+          <input id="inp_tax" type="number" min="0" step="0.01" value="0" />
+        </div>
+        <div>
+          <label>Amortisman (T)</label>
+          <input id="inp_dep" type="number" min="0" step="0.01" value="0" />
+        </div>
+        <div>
+          <label>İtfa (T)</label>
+          <input id="inp_amor" type="number" min="0" step="0.01" value="0" />
+        </div>
+        <div>
+          <label>Ana Para Ödemesi (T)</label>
+          <input id="inp_principal" type="number" min="0" step="0.01" value="0" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Analiz -->
+  <section id="sec-analiz" class="card hidden">
+    <div class="row">
+      <button id="btn-calc" class="secondary">Hesapla / Güncelle</button>
+      <span class="small">Önce “Tabloyu Kaydet” ve ardından “Hesapla”.</span>
+    </div>
+
+    <h3>Özet Göstergeler</h3>
+    <div class="grid" id="kpis"></div>
+
+    <h3 style="margin-top:16px">Finansal Oranlar</h3>
+    <table id="ratioTbl"><thead><tr><th>Oran</th><th id="r_t1h">T-1</th><th id="r_th">T</th><th>Durum</th></tr></thead><tbody></tbody></table>
+
+    <h3 style="margin-top:16px">Açıklamalar</h3>
+    <div id="explain" class="explain"></div>
+
+    <h3 style="margin-top:16px">Verimlilik & Spesifik Hesaplamalar</h3>
+    <table id="effTbl"><thead><tr><th>Gösterge</th><th>Formül</th><th>Değer</th></tr></thead><tbody></tbody></table>
+  </section>
+
+  <!-- Referans / Yardım -->
+  <section id="sec-ref" class="card hidden">
+    <h3>Hızlı Referans</h3>
+    <ul>
+      <li><b>Nakit (Hazır Değerler):</b> 100, 101, 102, 103, 108</li>
+      <li><b>Alacaklar:</b> 120, 121</li>
+      <li><b>Stoklar:</b> 150–159 (özellikle 153)</li>
+      <li><b>Kısa Vadeli Yükümlülükler (KVYK):</b> 300–399 (özellikle 300, 320, 321)</li>
+      <li><b>Uzun Vadeli Yükümlülükler (UVYK):</b> 400–499</li>
+      <li><b>Özkaynaklar:</b> 500–599 (500, 570, 590 önemli)</li>
+      <li><b>Net Satışlar:</b> 600–602 eksi 610–612</li>
+      <li><b>Satılan Malın Maliyeti (SMM/COGS):</b> 620</li>
+      <li><b>Net Kâr:</b> 590</li>
+    </ul>
+    <p class="small">Not: Hesap adları ve kodları tamamen düzenlenebilir; tablo yalnızca başlangıç iskeleti sağlar.</p>
+  </section>
+
+  <footer class="footer">© 2025 Nicaea Business Partners — Manuel girişli CFO analizi (v4.1).</footer>
+
+  <script src="assets/js/app.js" defer></script>
+</body>
+</html>
